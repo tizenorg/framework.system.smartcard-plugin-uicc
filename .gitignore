@@ -1,0 +1,12 @@
+.cproject
+.project
+obj-arm-linux-gnueabi
+debian/smartcard-plugin-uicc
+debian/smartcard-plugin-uicc-dbg
+debian/tmp
+debian/files
+debian/*.debhelper
+debian/*.substvars
+debian/*.ex
+gbs_temp
+

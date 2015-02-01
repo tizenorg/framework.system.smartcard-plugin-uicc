@@ -39,16 +39,11 @@ namespace smartcard_service_api
 		PMutex mutex;
 		TapiHandle *handle;
 
-		/* temporary data for sync function */
-		ByteArray response;
-		int error;
-
 		UICCTerminal();
 		~UICCTerminal();
 
-		static void uiccTransmitAPDUCallback(TapiHandle *handle, int result, void *data, void *user_data);
-		static void uiccGetAtrCallback(TapiHandle *handle, int result, void *data, void *user_data);
-		static void uiccStatusNotiCallback(TapiHandle *handle, const char *noti_id, void *data, void *user_data);
+		static void uiccStatusNotiCallback(TapiHandle *handle,
+			const char *noti_id, void *data, void *user_data);
 
 	public:
 		static UICCTerminal *getInstance();
@@ -56,17 +51,20 @@ namespace smartcard_service_api
 		bool initialize();
 		void finalize();
 
-		bool isSecureElementPresence();
+		bool open();
+		void close();
 
-		int transmitSync(ByteArray command, ByteArray &response);
+		bool isSecureElementPresence() const;
+
+		int transmitSync(const ByteArray &command, ByteArray &response);
 		int getATRSync(ByteArray &atr);
 
-		int transmit(ByteArray command, terminalTransmitCallback callback, void *userParam);
+		int transmit(const ByteArray &command,
+			terminalTransmitCallback callback, void *userParam);
 		int getATR(terminalGetATRCallback callback, void *userParam);
 
-		friend void uiccTransmitAPDUCallback(TapiHandle *handle, int result, void *data, void *user_data);
-		friend void uiccGetAtrCallback(TapiHandle *handle, int result, void *data, void *user_data);
-		friend void uiccStatusNotiCallback(TapiHandle *handle, const char *noti_id, void *data, void *user_data);
+		friend void uiccStatusNotiCallback(TapiHandle *handle,
+			const char *noti_id, void *data, void *user_data);
 	};
 
 } /* namespace smartcard_service_api */
