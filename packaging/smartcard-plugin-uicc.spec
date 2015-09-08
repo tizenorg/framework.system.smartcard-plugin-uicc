@@ -1,43 +1,55 @@
-Name:       smartcard-plugin-uicc
-Summary:    Smartcard plugin uicc
-Version:    0.0.1
-Release:    4
-Group:      libs
-License:    Samsung Proprietary License
-Source0:    %{name}-%{version}.tar.gz
-BuildRequires: pkgconfig(dlog)
-BuildRequires: pkgconfig(tapi)
-BuildRequires: pkgconfig(smartcard-service)
-BuildRequires: pkgconfig(smartcard-service-common)
-BuildRequires: cmake
-BuildRequires: gettext-tools
+Name:             smartcard-plugin-uicc
+Summary:          Smartcard plugin uicc
+Version:          0.0.10
+Release:          0
+Group:            libs
+License:          Apache-2.0
+Source0:          %{name}-%{version}.tar.gz
+BuildRequires:    cmake
+BuildRequires:    pkgconfig(glib-2.0)
+BuildRequires:    pkgconfig(dlog)
+BuildRequires:    pkgconfig(tapi)
+BuildRequires:    pkgconfig(smartcard-service-common)
 Requires(post):   /sbin/ldconfig
-Requires(post):   /usr/bin/vconftool
-requires(postun): /sbin/ldconfig
+Requires(postun): /sbin/ldconfig
+
 
 %description
 Smartcard Service plugin uicc
 
+
 %prep
 %setup -q
+
 
 %package    devel
 Summary:    smartcard service uicc
 Group:      Development/Libraries
 Requires:   %{name} = %{version}-%{release}
 
+
 %description devel
 smartcard service.
 
+
 %build
+%if 0%{?sec_build_binary_debug_enable}
+export CFLAGS="$CFLAGS -DTIZEN_DEBUG_ENABLE"
+export CXXFLAGS="$CXXFLAGS -DTIZEN_DEBUG_ENABLE"
+export FFLAGS="$FFLAGS -DTIZEN_DEBUG_ENABLE"
+%endif
 mkdir obj-arm-limux-qnueabi
 cd obj-arm-limux-qnueabi
 cmake .. -DCMAKE_INSTALL_PREFIX=%{_prefix}
 #make %{?jobs:-j%jobs}
 
+
 %install
 cd obj-arm-limux-qnueabi
 %make_install
+mkdir -p %{buildroot}/usr/share/license
+cp -af %{_builddir}/%{name}-%{version}/packaging/%{name} %{buildroot}/usr/share/license/
+
 
 %post
 /sbin/ldconfig
@@ -46,12 +58,9 @@ cd obj-arm-limux-qnueabi
 %postun
 /sbin/ldconfig
 
-#%post
-# -n nfc-common-lib -p /sbin/ldconfig
-
-#%postun
-# -n nfc-common-lib -p /sbin/ldconfig
 
 %files
+%manifest %{name}.manifest
 %defattr(-,root,root,-)
-/usr/lib/se/lib*.so
+%{_libdir}/se/lib*.so
+%{_datadir}/license/%{name}
