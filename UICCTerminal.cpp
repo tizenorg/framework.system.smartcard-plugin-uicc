@@ -322,7 +322,8 @@ namespace smartcard_service_api
 			{
 				g_main_loop_run(context.loop);
 
-				if((TelSimAtrResp_t *)context.resp != NULL)
+				if((TelSimAtrResp_t *)context.resp != NULL &&
+						((TelSimAtrResp_t *)context.resp)->atr_resp != NULL )
 				{
 					atr.assign(((TelSimAtrResp_t *)context.resp)->atr_resp,
 						((TelSimAtrResp_t *)context.resp)->atr_resp_len);
